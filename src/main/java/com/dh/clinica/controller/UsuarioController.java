@@ -14,7 +14,6 @@ import java.util.List;
 @RequestMapping("/usuarios")
 public class UsuarioController {
 
-    //anotação
     @Autowired
     private UsuarioServiceImpl usuarioService;
 
