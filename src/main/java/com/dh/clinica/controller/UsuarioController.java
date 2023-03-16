@@ -7,6 +7,9 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+
+// ANOTAÇÕES REALIZADAS PARA INDICAR QUE ESSA CLASSE É UMA CONTROLLER E QUE ESTAMOS MAPEANDO ELA
+// COM O PARÂMETRO ("/usuarios")
 @RestController
 @RequestMapping("/usuarios")
 public class UsuarioController {
