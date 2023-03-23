@@ -1,5 +1,4 @@
 package com.dh.clinica.controller;
-import com.dh.clinica.model.Endereco;
 import com.dh.clinica.model.Paciente;
 import com.dh.clinica.service.PacienteService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,11 +13,11 @@ public class PacienteController {
     @Autowired
     public PacienteService pacienteService;
 
-    @GetMapping("buscar")
+    @GetMapping("/buscar")
     public List<Paciente> listarTodas(){
         return pacienteService.listarTodos();
     }
-    @GetMapping("{id}")
+    @GetMapping("/buscar/{id}")
     public Optional<Paciente> buscarPorId(@PathVariable Integer id){
         return pacienteService.buscarPorId(id);
     }

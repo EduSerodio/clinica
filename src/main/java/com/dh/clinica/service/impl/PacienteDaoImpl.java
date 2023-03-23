@@ -63,12 +63,12 @@ public class PacienteDaoImpl implements IDao<Paciente> {
     @Override
     public List<Paciente> buscarTodos() {
         log.debug("Buscando todos os pacientes");
-        Connection conexao = configuracaoJDBC.conectarComBancoDeDados();
+        Connection connection = configuracaoJDBC.conectarComBancoDeDados();
         Statement stmt = null;
         String query = "SELECT * FROM paciente";
         List<Paciente> pacientes = new ArrayList<>();
         try {
-            stmt = conexao.createStatement();
+            stmt = connection.createStatement();
             ResultSet resultado = stmt.executeQuery(query);
             while (resultado.next()) {
                 pacientes.add(criarObjetoPaciente(resultado));

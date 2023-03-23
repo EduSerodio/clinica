@@ -27,19 +27,19 @@ public class UsuarioDaoImpl implements IDao<Usuario> {
 
     @Override
     public Usuario salvar(Usuario usuario) {
-        Connection conexao = configuracaoJDBC.conectarComBancoDeDados();
+        Connection connection = configuracaoJDBC.conectarComBancoDeDados();
         Statement stmt = null;
         String query = String.format("INSERT INTO USUARIO (NOME ,EMAIL, SENHA, NIVEL_ACESSO) " +
                         "VALUES ('%s','%s','%s','%s')", usuario.getNome(),
                 usuario.getEmail(), usuario.getSenha(), usuario.getNivelAcesso());
         try {
-            stmt = conexao.createStatement();
+            stmt = connection.createStatement();
             stmt.executeUpdate(query, Statement.RETURN_GENERATED_KEYS);
             ResultSet keys = stmt.getGeneratedKeys();
             if (keys.next())
                 usuario.setId(keys.getInt(1));
             stmt.close();
-            conexao.close();
+            connection.close();
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
@@ -48,18 +48,18 @@ public class UsuarioDaoImpl implements IDao<Usuario> {
 
     @Override
     public List<Usuario> buscarTodos() {
-        Connection conexao = configuracaoJDBC.conectarComBancoDeDados();
+        Connection connection = configuracaoJDBC.conectarComBancoDeDados();
         Statement stmt = null;
         String query = "SELECT * FROM USUARIO";
         List<Usuario> usuarios = new ArrayList<>();
         try {
-            stmt = conexao.createStatement();
+            stmt = connection.createStatement();
             ResultSet result = stmt.executeQuery(query);
             while (result.next()) {
                 usuarios.add(criarObjetoUsuario(result));
             }
             stmt.close();
-            conexao.close();
+            connection.close();
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
@@ -105,14 +105,14 @@ public class UsuarioDaoImpl implements IDao<Usuario> {
 
     @Override
     public void excluir(Integer id) {
-        Connection conexao = configuracaoJDBC.conectarComBancoDeDados();
+        Connection connection = configuracaoJDBC.conectarComBancoDeDados();
         Statement stmt = null;
         String query = String.format("DELETE FROM USUARIO WHERE ID = %s", id);
         try {
-            stmt = conexao.createStatement();
+            stmt = connection.createStatement();
             stmt.executeUpdate(query);
             stmt.close();
-            conexao.close();
+            connection.close();
         } catch (SQLException throwables) {
 
         }

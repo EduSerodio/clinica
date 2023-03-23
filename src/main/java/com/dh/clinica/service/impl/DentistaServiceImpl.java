@@ -27,7 +27,8 @@ public class DentistaServiceImpl implements IDao<Dentista> {
     public Dentista salvar(Dentista dentista) {
         log.debug("Registrando novo dentista: " + dentista.toString());
         Connection connection = configuracaoJDBC.conectarComBancoDeDados();
-        Statement stmt = null; String query = String.format("INSERT INTO DENTISTA (NOME, SOBRENOME, MATRICULA) VALUES ('%s', '%s', '%s')", dentista.getNome(), dentista.getSobrenome(), dentista.getMatricula());
+        Statement stmt = null; String query = String.format("INSERT INTO DENTISTA (NOME, SOBRENOME, MATRICULA) VALUES ('%s', '%s', '%s')",
+                dentista.getNome(), dentista.getSobrenome(), dentista.getMatricula());
         try {
             stmt = connection.createStatement();
             stmt.executeUpdate(query, Statement.RETURN_GENERATED_KEYS);

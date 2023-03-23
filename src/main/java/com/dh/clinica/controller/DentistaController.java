@@ -19,7 +19,7 @@ public class DentistaController {
         return dentistaService.listarTodos();
     }
 
-    @GetMapping("{id}")
+    @GetMapping("/buscar/{id}")
     public Optional<Dentista> buscarPorId(@PathVariable Integer id){
         return dentistaService.buscarPorId(id);
     }

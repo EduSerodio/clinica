@@ -5,7 +5,6 @@ import com.dh.clinica.model.Endereco;
 import com.dh.clinica.service.IDao;
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Service;
-
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;

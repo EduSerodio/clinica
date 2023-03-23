@@ -1,12 +1,8 @@
 package com.dh.clinica.controller;
-
-import com.dh.clinica.model.Endereco;
 import com.dh.clinica.model.Usuario;
 import com.dh.clinica.service.UsuarioService;
-import com.dh.clinica.service.impl.UsuarioDaoImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
 import java.util.Optional;
 
