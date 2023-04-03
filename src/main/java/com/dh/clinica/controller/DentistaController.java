@@ -62,7 +62,7 @@ public class DentistaController {
         if (dentistaService.buscarPorId(id).isPresent()) {
             dentistaService.excluir(id);
             log.debug("Dentista exluido com sucesso!!");
-            return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+            return ResponseEntity.status(HttpStatus.OK).body("Dentista deletado com sucesso");
         } else {
             return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
         }

@@ -36,12 +36,12 @@ public class UsuarioController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Usuario> deletarUsuario(@PathVariable Integer id) {
+    public ResponseEntity<String> deletarUsuario(@PathVariable Integer id) {
         log.debug("Deletando usuario pelo ID");
         if (usuarioService.buscarPorId(id).isPresent()){
             usuarioService.excluir(id);
             log.debug("Usuario deletado com sucesso");
-            return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+            return ResponseEntity.status(HttpStatus.OK).body("Usuario deletado com sucesso");
         }else {
             return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
         }

@@ -1,6 +1,5 @@
 package com.dh.clinica.controller;
 import com.dh.clinica.model.Paciente;
-import com.dh.clinica.model.Usuario;
 import com.dh.clinica.service.impl.PacienteServiceImpl;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,12 +51,12 @@ public class PacienteController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Paciente> deletarPaciente (@PathVariable Integer id){
+    public ResponseEntity<String> deletarPaciente (@PathVariable Integer id){
         log.debug("Deletando paciente pelo seu ID");
         if (pacienteService.buscarPorId(id).isPresent()){
             pacienteService.excluir(id);
             log.debug("ID excluido com sucesso");
-            return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+            return ResponseEntity.status(HttpStatus.OK).body("Paciente deletado com sucesso");
         }else {
             return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
         }

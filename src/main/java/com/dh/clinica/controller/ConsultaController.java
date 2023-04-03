@@ -59,7 +59,7 @@ public class ConsultaController {
         Optional<Consulta> consultaExistente = consultaService.buscarPorId(id);
         if (consultaExistente.isPresent()) {
             consultaService.excluir(id);
-            return ResponseEntity.ok("Consulta apagada!");
+            return ResponseEntity.status(HttpStatus.OK).body("Consulta deletada com sucesso");
         } else {
             return ResponseEntity.notFound().build();
         }
