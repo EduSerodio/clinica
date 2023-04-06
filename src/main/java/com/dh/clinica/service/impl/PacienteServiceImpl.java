@@ -1,11 +1,14 @@
 package com.dh.clinica.service.impl;
 
+import com.dh.clinica.controller.dto.PacienteResponse;
 import com.dh.clinica.model.Paciente;
 import com.dh.clinica.repository.IPacienteRepository;
 import com.dh.clinica.service.IPacienteService;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -26,8 +29,14 @@ public class PacienteServiceImpl implements IPacienteService<Paciente> {
     }
 
     @Override
-    public List<Paciente> buscarTodos() {
-        return pacienteRepository.findAll();
+    public List<PacienteResponse> buscarTodos() {
+        List<Paciente> pacientes = pacienteRepository.findAll();
+        List<PacienteResponse> pacienteResponses = new ArrayList<>();
+        ObjectMapper mapper = new ObjectMapper();
+        for (Paciente paciente: pacientes){
+            pacienteResponses.add(mapper.convertValue(paciente, PacienteResponse.class));
+        }
+        return pacienteResponses;
     }
 
     @Override

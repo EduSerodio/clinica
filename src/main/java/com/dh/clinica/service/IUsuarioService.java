@@ -1,5 +1,7 @@
 package com.dh.clinica.service;
 
+import com.dh.clinica.controller.dto.UsuarioResponse;
+
 import java.util.List;
 import java.util.Optional;
 
@@ -8,7 +10,7 @@ public interface IUsuarioService<Usuario> {
 
     Usuario salvar (Usuario usuario);
 
-    List<Usuario> buscarTodos();
+    List<UsuarioResponse> buscarTodos();
 
     Optional<Usuario> buscarPorId(Integer id);
 
