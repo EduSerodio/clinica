@@ -1,11 +1,15 @@
 package com.dh.clinica.service.impl;
 
+import com.dh.clinica.controller.dto.PacienteRequest;
 import com.dh.clinica.controller.dto.PacienteResponse;
+import com.dh.clinica.exception.ResourceNotFoundException;
 import com.dh.clinica.model.Paciente;
+import com.dh.clinica.repository.IDentistaRepository;
 import com.dh.clinica.repository.IPacienteRepository;
 import com.dh.clinica.service.IPacienteService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -16,6 +20,8 @@ import java.util.Optional;
 public class PacienteServiceImpl implements IPacienteService<Paciente> {
 
 
+    private ObjectMapper mapper = new ObjectMapper();
+
     private IPacienteRepository pacienteRepository;
 
     @Autowired
@@ -24,15 +30,17 @@ public class PacienteServiceImpl implements IPacienteService<Paciente> {
     }
 
     @Override
-    public Paciente salvar(Paciente paciente) {
-        return pacienteRepository.save(paciente);
+    public PacienteResponse salvar(PacienteRequest pacienteRequest) {
+        Paciente paciente = mapper.convertValue(pacienteRequest, Paciente.class);
+        Paciente save = pacienteRepository.save(paciente);
+        PacienteResponse pacienteResponse = mapper.convertValue(save, PacienteResponse.class);
+        return pacienteResponse;
     }
 
     @Override
     public List<PacienteResponse> buscarTodos() {
         List<Paciente> pacientes = pacienteRepository.findAll();
         List<PacienteResponse> pacienteResponses = new ArrayList<>();
-        ObjectMapper mapper = new ObjectMapper();
         for (Paciente paciente: pacientes){
             pacienteResponses.add(mapper.convertValue(paciente, PacienteResponse.class));
         }
@@ -40,8 +48,11 @@ public class PacienteServiceImpl implements IPacienteService<Paciente> {
     }
 
     @Override
-    public Optional<Paciente> buscarPorId(Integer id) {
-        return pacienteRepository.findById(id);
+    public PacienteResponse buscarPorId(Integer id) {
+        Paciente pacienteId = pacienteRepository.findById(id).orElse(null);
+        PacienteResponse pacienteResponse = mapper.convertValue(pacienteId, PacienteResponse.class);
+        return pacienteResponse;
+
     }
 
     @Override
@@ -50,12 +61,33 @@ public class PacienteServiceImpl implements IPacienteService<Paciente> {
     }
 
     @Override
-    public Paciente atualizar(Paciente paciente) {
-        return pacienteRepository.save(paciente);
+    public PacienteResponse atualizar(PacienteRequest paciente) {
+        Paciente paciente1 = mapper.convertValue(paciente, Paciente.class);
+        Paciente save = pacienteRepository.saveAndFlush(paciente1);
+        PacienteResponse pacienteResponse = mapper.convertValue(save, PacienteResponse.class);
+        return pacienteResponse;
     }
 
     @Override
-    public Optional<Paciente> buscarPorNome(String nome) {
-        return pacienteRepository.findPacienteBynomeContainingIgnoreCase(nome);
+    public PacienteResponse buscarPorNome(String nome) throws ResourceNotFoundException {
+        Paciente pacienteBynome = pacienteRepository.findPacienteBynomeContainingIgnoreCase(nome);
+        if (pacienteBynome != null) {
+            PacienteResponse pacienteResponse = mapper.convertValue(pacienteBynome, PacienteResponse.class);
+            return pacienteResponse;
+        }else {
+            throw new ResourceNotFoundException("Não foi possivel encontrar o paciente pelo nome");
+        }
+    }
+
+    @Override
+    public PacienteResponse buscarRg(String rg) throws ResourceNotFoundException {
+        Paciente pacienteByRg = pacienteRepository.findPacienteByRgContainingIgnoreCase(rg);
+        if (pacienteByRg != null) {
+            PacienteResponse pacienteResponse = mapper.convertValue(pacienteByRg, PacienteResponse.class);
+            return pacienteResponse;
+        } else {
+            throw new ResourceNotFoundException("Não foi possivel encotrar p rg do paciente");
+        }
+
     }
 }

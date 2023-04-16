@@ -2,7 +2,6 @@ package com.dh.clinica.controller;
 import com.dh.clinica.controller.dto.DentistaRequest;
 import com.dh.clinica.controller.dto.DentistaResponse;
 import com.dh.clinica.exception.ResourceNotFoundException;
-import com.dh.clinica.model.Dentista;
 import com.dh.clinica.service.impl.DentistaServiceImpl;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,7 +10,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 
 @RestController                       //ANOTAÇÃO PARA INDICAR QUE ESSA CLASSE É UMA CONTROLLER
 @RequestMapping("/dentistas")         //ANOTAÇÃO QUE INDICA O MAPEAMENTO DA ROTA PELO /dentista)
@@ -40,20 +38,16 @@ public class DentistaController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity <Optional<Dentista>> buscarPorId(@PathVariable Integer id) throws ResourceNotFoundException {
+    public ResponseEntity <DentistaResponse> buscarPorId(@PathVariable Integer id) throws ResourceNotFoundException {
         log.debug("Buscando dentista pelo ID");
-        Dentista dentista = dentistaService.buscarPorId(id).orElse(null);
-        if (dentista != null) {
-            log.debug("dentista encontrado - STATUS 200");
-            return ResponseEntity.ok(Optional.of(dentista));
-        }else {
-            throw new ResourceNotFoundException("Não foi possivel encontrar os dentistas");
-        }
+        DentistaResponse dentista = dentistaService.buscarPorId(id);
+        return ResponseEntity.ok(dentista);
+
     }
 
     @GetMapping("/nome/{nome}")
-    public ResponseEntity<Dentista> buscarPorNome (@PathVariable String nome) throws ResourceNotFoundException {
-        Dentista dentista = dentistaService.buscarPorNome(nome).orElse(null);
+    public ResponseEntity<DentistaResponse> buscarPorNome (@PathVariable String nome) throws ResourceNotFoundException {
+        DentistaResponse dentista = dentistaService.buscarPorNome(nome);
         if (dentista != null){
             log.debug("Nome encontrado com sucesso - STATUS 200");
             return ResponseEntity.ok(dentista);
@@ -65,7 +59,7 @@ public class DentistaController {
     @DeleteMapping("/{id}")
     public ResponseEntity deletarDentista(@PathVariable Integer id) throws ResourceNotFoundException {
         log.debug("Delentando dentista pelo ID");
-        if (dentistaService.buscarPorId(id).isPresent()) {
+        if (dentistaService.buscarPorId(id) != null) {
             dentistaService.excluir(id);
             log.debug("Dentista exluido com sucesso!!");
             return ResponseEntity.status(HttpStatus.OK).body("Dentista deletado com sucesso");
@@ -87,9 +81,9 @@ public class DentistaController {
     }
 
     @PutMapping
-    public ResponseEntity<Dentista> atualizar (@RequestBody Dentista dentista) throws ResourceNotFoundException {
+    public ResponseEntity<DentistaResponse> atualizar (@RequestBody DentistaRequest dentista) throws ResourceNotFoundException {
         log.debug("Atualizando dentista");
-        if (dentista.getId() != null && dentistaService.buscarPorId(dentista.getId()).isPresent()) {
+        if (dentista.getMatricula() != null && dentistaService.buscarPorMatricula(dentista.getMatricula()) != null) {
             log.debug("Dentista foi atualizado com sucesso - STATUS 200");
             return ResponseEntity.ok(dentistaService.atualizar(dentista));
         }else {

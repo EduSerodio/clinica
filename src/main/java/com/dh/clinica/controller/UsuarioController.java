@@ -1,7 +1,7 @@
 package com.dh.clinica.controller;
+import com.dh.clinica.controller.dto.UsuarioRequest;
 import com.dh.clinica.controller.dto.UsuarioResponse;
 import com.dh.clinica.exception.ResourceNotFoundException;
-import com.dh.clinica.model.Usuario;
 import com.dh.clinica.service.impl.UsuarioServiceImpl;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,7 +10,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 
 // ANOTAÇÕES REALIZADAS PARA INDICAR QUE ESSA CLASSE É UMA CONTROLLER E QUE ESTAMOS MAPEANDO ELA
 // COM O PARÂMETRO ("/usuarios")
@@ -38,7 +37,7 @@ public class UsuarioController {
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deletarUsuario(@PathVariable Integer id) throws ResourceNotFoundException {
         log.debug("Deletando usuario pelo ID");
-        if (usuarioService.buscarPorId(id).isPresent()){
+        if (usuarioService.buscarPorId(id) != null ){
             usuarioService.excluir(id);
             log.debug("Usuario deletado com sucesso");
             return ResponseEntity.status(HttpStatus.OK).body("Usuario deletado com sucesso");
@@ -48,9 +47,9 @@ public class UsuarioController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Optional<Usuario>> buscarPorId(@PathVariable Integer id) throws ResourceNotFoundException {
-        log.debug("Buscanddo usuario por ID");
-        Optional<Usuario> usuario = usuarioService.buscarPorId(id);
+    public ResponseEntity<UsuarioResponse> buscarPorId(@PathVariable Integer id) throws ResourceNotFoundException {
+        log.debug("Buscando usuario por ID");
+        UsuarioResponse usuario = usuarioService.buscarPorId(id);
         if (usuario != null) {
             log.debug("Usuario encontrado com sucesso - STATUS 200");
             return ResponseEntity.ok(usuario);
@@ -60,9 +59,9 @@ public class UsuarioController {
     }
 
     @GetMapping("/nome/{nome}")
-    public ResponseEntity<Usuario> buscarPorNome (@PathVariable String nome) throws ResourceNotFoundException {
+    public ResponseEntity <List<UsuarioResponse>> buscarPorNome (@PathVariable String nome) throws ResourceNotFoundException {
         log.debug("Realizando buscar por nome !");
-        Usuario usuario = usuarioService.buscarPorNome(nome).orElse(null);
+        List<UsuarioResponse> usuario = usuarioService.buscarPorNome(nome);
         if (usuario != null) {
             log.debug("nome do usuario foi encontrado com sucesso - STATUS 200");
             return ResponseEntity.ok(usuario);
@@ -72,9 +71,9 @@ public class UsuarioController {
     }
 
     @PostMapping
-    public ResponseEntity<Usuario> salvar(@RequestBody Usuario usuario) throws ResourceNotFoundException {
+    public ResponseEntity<UsuarioResponse> salvar(@RequestBody UsuarioRequest usuario) throws ResourceNotFoundException {
         log.debug("Realizando cadastro de usuarios");
-        if (Objects.nonNull(usuario.getNivelAcesso())) {
+        if (Objects.nonNull(usuario.getEmail())) {
             log.debug("Usuario salvo com sucesso - STATUS 200");
             return ResponseEntity.ok(usuarioService.salvar(usuario));
         } else {
@@ -83,9 +82,9 @@ public class UsuarioController {
     }
 
     @PutMapping
-    public ResponseEntity<Usuario> atualizar (@RequestBody Usuario usuario) throws ResourceNotFoundException {
+    public ResponseEntity<UsuarioResponse> atualizar (@RequestBody UsuarioRequest usuario) throws ResourceNotFoundException {
         log.debug("Atualizando usuarios");
-        if (usuario.getId() != null && usuarioService.buscarPorId(usuario.getId()).isPresent()) {
+        if (usuario.getEmail() != null && usuarioService.buscarEmail(usuario.getEmail()) != null) {
             log.debug("Usuario atualizado com sucesso - STATUS 200");
             return ResponseEntity.ok(usuarioService.atualizar(usuario));
         }else {

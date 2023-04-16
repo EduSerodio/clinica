@@ -16,10 +16,10 @@ public class Consulta {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
+    @OneToOne
     @JoinColumn(name = "paciente_id")
     private Paciente paciente;
-    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
+    @OneToOne
     @JoinColumn(name = "dentista_id")
     private Dentista dentista;
 

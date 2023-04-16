@@ -10,6 +10,10 @@ import java.util.Optional;
 @Repository
 public interface IDentistaRepository extends JpaRepository<Dentista, Integer> {
 
-    Optional<Dentista> findDentistaBynomeContainingIgnoreCase(String nome);
+    Dentista findDentistaByNomeContainingIgnoreCase(String nome);
+
+    Dentista findDentistaById(Integer id);
+
+    Dentista findDentistaByMatriculaContainingIgnoreCase(String matricula);
 
 }

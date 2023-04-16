@@ -8,6 +8,8 @@ import java.util.Optional;
 @Repository
 public interface IConsultaRepository extends JpaRepository<Consulta, Integer> {
 
-    Optional<Consulta> findConsultaByDentistaNome(String nome);
+   Consulta findConsultaByDentistaNomeContainingIgnoreCase(String nome);
+
+   Consulta findConsultaByid(Integer id);
 
 }

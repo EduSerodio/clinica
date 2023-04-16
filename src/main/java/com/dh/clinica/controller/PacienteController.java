@@ -1,7 +1,7 @@
 package com.dh.clinica.controller;
+import com.dh.clinica.controller.dto.PacienteRequest;
 import com.dh.clinica.controller.dto.PacienteResponse;
 import com.dh.clinica.exception.ResourceNotFoundException;
-import com.dh.clinica.model.Paciente;
 import com.dh.clinica.service.impl.PacienteServiceImpl;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,7 +10,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/pacientes")
@@ -34,20 +33,20 @@ public class PacienteController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Optional<Paciente>> buscarPorId(@PathVariable Integer id) throws ResourceNotFoundException {
+    public ResponseEntity <PacienteResponse> buscarPorId(@PathVariable Integer id) throws ResourceNotFoundException {
         log.debug("Realizando busca do paciente pelo seu ID");
-        Paciente paciente = pacienteService.buscarPorId(id).orElse(null);
-        if (paciente != null) {
-            log.debug("ID do paciente foi encontrado com sucesso!! - STATUS 200");
-            return ResponseEntity.ok(Optional.of(paciente));
+        PacienteResponse pacienteResponse = pacienteService.buscarPorId(id);
+        if (pacienteResponse != null) {
+            log.debug("ID do paciente encontrado com sucesso - STATUS 200");
+            return ResponseEntity.ok(pacienteResponse);
         }else {
-            throw new ResourceNotFoundException("Não foi possivel buscar paciente por ID");
+            throw new ResourceNotFoundException("Não foi possivel encontrar Id do paciente");
         }
     }
 
     @GetMapping("/nome/{nome}")
-    public ResponseEntity<Paciente> buscarPorNome (@PathVariable String nome) throws ResourceNotFoundException {
-        Paciente paciente = pacienteService.buscarPorNome(nome).orElse(null);
+    public ResponseEntity<PacienteResponse> buscarPorNome (@PathVariable String nome) throws ResourceNotFoundException {
+        PacienteResponse paciente = pacienteService.buscarPorNome(nome);
         if (paciente != null) {
             log.debug("Nome do paciente encontrado com sucesso - STATUS 200");
             return ResponseEntity.ok(paciente);
@@ -59,7 +58,7 @@ public class PacienteController {
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deletarPaciente (@PathVariable Integer id) throws ResourceNotFoundException {
         log.debug("Deletando paciente pelo seu ID");
-        if (pacienteService.buscarPorId(id).isPresent()){
+        if (pacienteService.buscarPorId(id) != null){
             pacienteService.excluir(id);
             log.debug("ID excluido com sucesso");
             return ResponseEntity.status(HttpStatus.OK).body("Paciente deletado com sucesso");
@@ -69,23 +68,23 @@ public class PacienteController {
     }
 
     @PostMapping
-    public ResponseEntity<Paciente> salvar(@RequestBody Paciente paciente) throws ResourceNotFoundException {
-        log.debug("Realizando o cadastro de Paciente");
-        if (Objects.nonNull(paciente.getRg())){
-            log.debug("Paciente cadastrado com sucesso - STATUS 200");
-            return ResponseEntity.ok(pacienteService.salvar(paciente));
+    public ResponseEntity<PacienteResponse> salvar(@RequestBody PacienteRequest pacienteRequest) throws ResourceNotFoundException {
+        log.debug("Salvando Paciente!");
+        if (Objects.nonNull(pacienteRequest.getRg())){
+            log.debug("Paciente salvo com sucesso - STATUS 200");
+            return ResponseEntity.ok(pacienteService.salvar(pacienteRequest));
         }else {
-            throw new ResourceNotFoundException("Não foi possivel listar todos os pacientes");
+            throw new ResourceNotFoundException("Não foi possivel salvar o paciente");
         }
 
     }
 
     @PutMapping
-    public ResponseEntity<Paciente> atualizar (@RequestBody Paciente paciente) throws ResourceNotFoundException {
+    public ResponseEntity<PacienteResponse> atualizar (@RequestBody PacienteRequest paciente) throws ResourceNotFoundException {
         log.debug("Atualizando pacientes");
-        if (paciente.getId() != null && pacienteService.buscarPorId(paciente.getId()).isPresent()) {
+        if (paciente.getRg() != null && pacienteService.buscarRg(paciente.getRg()) != null) {
             log.debug("Paciente foi atualizado com sucesso - STATUS 200");
-            return ResponseEntity.ok(paciente);
+            return ResponseEntity.ok(pacienteService.atualizar(paciente));
         }else {
             throw new ResourceNotFoundException("Não foi possivel atualizar todos os pacientes");
         }

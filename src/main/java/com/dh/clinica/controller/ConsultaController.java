@@ -1,4 +1,6 @@
 package com.dh.clinica.controller;
+import com.dh.clinica.controller.dto.ConsultaRequest;
+import com.dh.clinica.controller.dto.ConsultaResponse;
 import com.dh.clinica.exception.ResourceNotFoundException;
 import com.dh.clinica.model.Consulta;
 import com.dh.clinica.service.impl.ConsultaServiceImpl;
@@ -26,22 +28,21 @@ public class ConsultaController {
     private ConsultaServiceImpl consultaService;
 
     @PostMapping
-    public ResponseEntity<Consulta> cadastrarConsulta(@RequestBody Consulta consulta) throws ResourceNotFoundException {
-        ResponseEntity<Consulta> response;
-        if (pacienteService.buscarPorId(consulta.getPaciente().getId()).isPresent() &&
-                dentistaService.buscarPorId(consulta.getDentista().getId()).isPresent()) {
-            response = ResponseEntity.ok(consultaService.salvar(consulta));
+    public ResponseEntity<ConsultaResponse> salvarConsulta (@RequestBody ConsultaRequest consultaRequest) throws ResourceNotFoundException {
+        log.debug("Salvar consulta!");
+        if (pacienteService.buscarPorId(consultaRequest.getPacienteId()) !=null &&
+                dentistaService.buscarPorId(consultaRequest.getDentistaId()) !=null ) {
+            return ResponseEntity.ok(consultaService.salvar(consultaRequest));
         } else {
             throw new ResourceNotFoundException("Não foi possivel cadastrar uma consulta");
         }
-        return response;
     }
 
     @GetMapping
-    public ResponseEntity<List<Consulta>> buscarTodasConsultas() throws ResourceNotFoundException {
-        List<Consulta> consultas = consultaService.buscarTodos();
+    public ResponseEntity<List<ConsultaResponse>> buscarTodasConsultas() throws ResourceNotFoundException {
+        List<ConsultaResponse> consultas = consultaService.buscarTodos();
         if (!consultas.isEmpty()) {
-            log.debug("Lista de consulta encontrada com sucesso - STATUS 200");
+            log.debug("Lista de consultas encontrada com sucesso - STATUS 200");
             return ResponseEntity.ok(consultas);
         }else {
             throw new ResourceNotFoundException("Não foi possivel encontrar lista de consulta");
@@ -49,10 +50,9 @@ public class ConsultaController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Consulta> atualizarConsulta(@PathVariable Integer id, @RequestBody Consulta consulta) throws ResourceNotFoundException {
-        Optional<Consulta> consultaExistente = consultaService.buscarPorId(id);
-        if (consultaExistente.isPresent()) {
-            consulta.setId(id);
+    public ResponseEntity<ConsultaResponse> atualizarConsulta(@RequestBody ConsultaRequest consulta) throws ResourceNotFoundException {
+        ConsultaResponse consultaExistente = consultaService.buscarPorId(consulta.getId());
+        if (consultaExistente != null) {
             return ResponseEntity.ok(consultaService.atualizar(consulta));
         } else {
             throw new ResourceNotFoundException("Não foi possivel atualizar consulta");
@@ -60,8 +60,8 @@ public class ConsultaController {
     }
 
     @GetMapping("/nome/{nome}")
-    public ResponseEntity<Consulta> buscarPorNome (@PathVariable String nome) throws ResourceNotFoundException {
-        Consulta consulta = consultaService.buscarPorNome(nome).orElse(null);
+    public ResponseEntity<ConsultaResponse> buscarPorNome (@PathVariable String nome) throws ResourceNotFoundException {
+        ConsultaResponse consulta = consultaService.buscarPorNome(nome);
         if (consulta != null) {
             log.debug("Nome da consulta encontrado com sucesso! - STATUS 200");
             return ResponseEntity.ok(consulta);
@@ -71,9 +71,9 @@ public class ConsultaController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<String> excluirConsulta(@PathVariable Integer id) throws ResourceNotFoundException {
-        Optional<Consulta> consultaExistente = consultaService.buscarPorId(id);
-        if (consultaExistente.isPresent()) {
+    public ResponseEntity excluirConsulta(@PathVariable Integer id) throws ResourceNotFoundException {
+        log.debug("Exluindo consulta");
+        if (consultaService.buscarPorId(id) != null) {
             consultaService.excluir(id);
             return ResponseEntity.status(HttpStatus.OK).body("Consulta deletada com sucesso");
         } else {

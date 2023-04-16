@@ -1,21 +1,21 @@
 package com.dh.clinica.service;
-
+import com.dh.clinica.controller.dto.ConsultaRequest;
+import com.dh.clinica.controller.dto.ConsultaResponse;
+import com.dh.clinica.exception.ResourceNotFoundException;
 import java.util.List;
-import java.util.Optional;
-
 
 public interface IConsultaService<Consulta> {
 
-    Consulta salvar (Consulta consulta);
+    ConsultaResponse salvar (ConsultaRequest consulta);
 
-    List<Consulta> buscarTodos();
+    List<ConsultaResponse> buscarTodos();
 
-    Optional<Consulta> buscarPorId(Integer id);
+    ConsultaResponse buscarPorId(Integer id) throws ResourceNotFoundException;
 
     void excluir (Integer id);
 
-    Consulta atualizar (Consulta consulta);
+    ConsultaResponse atualizar (ConsultaRequest consulta);
 
-    Optional<Consulta> buscarPorNome (String nome);
+    ConsultaResponse buscarPorNome (String nome) throws ResourceNotFoundException;
 
 }
